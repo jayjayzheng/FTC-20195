@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,7 +55,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Outside-left: Auto Drive By Time", group="Team 20195")
 
-public class AutoTest extends LinearOpMode {
+public class AutoByTime extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor BR;
@@ -67,7 +66,7 @@ public class AutoTest extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
 
 
-    static final double     FORWARD_SPEED = 0.3;
+    static final double     FORWARD_SPEED = 0.6;
     static final double     TURN_SPEED    = 0.5;
 
     @Override
@@ -118,8 +117,6 @@ public class AutoTest extends LinearOpMode {
         }
 
         // Step 3:  Drive Backward for 1 Second
-        // BL.setPower(-FORWARD_SPEED);
-        // FR.setPower(-FORWARD_SPEED);
         BL.setPower(FORWARD_SPEED);
         FR.setPower(FORWARD_SPEED);
         FL.setPower(FORWARD_SPEED);
