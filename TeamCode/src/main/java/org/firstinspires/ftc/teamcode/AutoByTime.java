@@ -102,7 +102,7 @@ public class AutoByTime extends LinearOpMode {
         BR.setPower(FORWARD_SPEED);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -111,7 +111,7 @@ public class AutoByTime extends LinearOpMode {
         BL.setPower(TURN_SPEED);
         FR.setPower(-TURN_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.7)){
+        while (opModeIsActive() && (runtime.seconds() < 1.9)){
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -123,7 +123,7 @@ public class AutoByTime extends LinearOpMode {
         BR.setPower(FORWARD_SPEED);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.8)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
