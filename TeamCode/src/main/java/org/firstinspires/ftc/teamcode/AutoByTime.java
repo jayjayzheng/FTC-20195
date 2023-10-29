@@ -72,30 +72,16 @@ public class AutoByTime extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Initialize the drive system variables.
-        BR = hardwareMap.get(DcMotor.class, "BR");
-        BL = hardwareMap.get(DcMotor.class, "BL");
-        FL = hardwareMap.get(DcMotor.class, "FL");
-        FR = hardwareMap.get(DcMotor.class, "FR");
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        BL.setDirection(DcMotor.Direction.REVERSE);
-        FR.setDirection(DcMotor.Direction.REVERSE);
-        BR.setDirection(DcMotor.Direction.FORWARD);
-        FL.setDirection(DcMotor.Direction.FORWARD);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
-        telemetry.update();
+        //call helper to initialize the motor
+        BotHelper helper = new BotHelper();
+        helper.init(BR, BL, FR, FL);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
-        // Step 1:  Drive forward for 3 seconds
+        // Step 1:  Drive forward for 1 seconds
         BL.setPower(FORWARD_SPEED);
         FR.setPower(FORWARD_SPEED);
         FL.setPower(FORWARD_SPEED);
@@ -107,7 +93,7 @@ public class AutoByTime extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step 2:  Spin right for 1.3 seconds
+        // Step 2:  Spin right for 1.9 seconds
         BL.setPower(TURN_SPEED);
         FR.setPower(-TURN_SPEED);
         runtime.reset();
@@ -116,7 +102,7 @@ public class AutoByTime extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step 3:  Drive Backward for 1 Second
+        // Step 3:  Drive Backward for 2.8 Second
         BL.setPower(FORWARD_SPEED);
         FR.setPower(FORWARD_SPEED);
         FL.setPower(FORWARD_SPEED);
