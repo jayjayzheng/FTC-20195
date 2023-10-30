@@ -34,13 +34,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
  * The code is structured as a LinearOpMode
@@ -67,8 +60,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Outside-left: Auto Drive By Encoder", group="Team 20195")
-public class AutoByEncoder extends LinearOpMode {
+@Autonomous(name="Auto By Encoder: Inside-right", group="Team 20195")
+public class InsideRightAutoByEncoder extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
@@ -94,7 +87,23 @@ public class AutoByEncoder extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //initialize
+        this.getReady();
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
 
+        // Step through each leg of the path,
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        encoderDrive(DRIVE_SPEED,  -10,  -10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
+        encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, -10, -10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);  // pause to display final telemetry message.
+    }
+
+    private void getReady() {
         // Initialize the drive system variables.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
@@ -126,19 +135,6 @@ public class AutoByEncoder extends LinearOpMode {
                 rightFrontDrive.getCurrentPosition(),
                 rightBackDrive.getCurrentPosition());
         telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  -50,  -50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -90, -90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
     }
 
     /*

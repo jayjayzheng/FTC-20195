@@ -53,75 +53,78 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Outside-left: Auto Drive By Time", group="Team 20195")
+@Autonomous(name="Auto Drive By Time: Inside-left", group="Team 20195")
 
-public class AutoByTime extends LinearOpMode {
-
-    /* Declare OpMode members. */
+public class InsideLeftAutoByTime extends LinearOpMode {
     private DcMotor BR;
     private DcMotor BL;
     private DcMotor FL;
     private DcMotor FR;
-
     private ElapsedTime     runtime = new ElapsedTime();
-
-
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
 
     @Override
     public void runOpMode() {
 
         //call helper to initialize the motor
         BotHelper helper = new BotHelper();
-        helper.init(BR, BL, FR, FL);
+        this.getReady();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
-
         // Step 1:  Drive forward for 1 seconds
-        BL.setPower(FORWARD_SPEED);
-        FR.setPower(FORWARD_SPEED);
-        FL.setPower(FORWARD_SPEED);
-        BR.setPower(FORWARD_SPEED);
+        helper.drive(BR, BL, FL, FR, helper.FORWARD_SPEED);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < helper.INSIDE_FORWARD_TIME)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         // Step 2:  Spin right for 1.9 seconds
-        BL.setPower(TURN_SPEED);
-        FR.setPower(-TURN_SPEED);
+        helper.turnLeft(BL, FR);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.9)){
+        while (opModeIsActive() && (runtime.seconds() < helper.TURN_TIME)){
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         // Step 3:  Drive Backward for 2.8 Second
-        BL.setPower(FORWARD_SPEED);
-        FR.setPower(FORWARD_SPEED);
-        FL.setPower(FORWARD_SPEED);
-        BR.setPower(FORWARD_SPEED);
+        helper.drive(BR, BL, FL, FR, helper.FORWARD_SPEED);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.8)) {
+        while (opModeIsActive() && (runtime.seconds() < helper.INSIDE_HOME_TIME)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         // Step 4:  Stop
-        BL.setPower(0);
-        FR.setPower(0);
-        FL.setPower(0);
-        BR.setPower(0);
+        helper.stop(BL, FR, FL, BR);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);
+    }
+
+    private void getReady() {
+
+        // Initialize the drive system variables.
+        BR = hardwareMap.get(DcMotor.class, "BR"); //back right motor
+        BL = hardwareMap.get(DcMotor.class, "BL"); //back left motor
+        FL = hardwareMap.get(DcMotor.class, "FL"); //front left motor
+        FR = hardwareMap.get(DcMotor.class, "FR"); //front right motor
+
+        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
+        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        BL.setDirection(DcMotor.Direction.REVERSE);
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.FORWARD);
+        FL.setDirection(DcMotor.Direction.FORWARD);
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Ready to run");
+        telemetry.update();
     }
 }

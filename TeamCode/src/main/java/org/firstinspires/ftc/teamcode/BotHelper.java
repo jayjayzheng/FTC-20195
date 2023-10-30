@@ -1,27 +1,39 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class BotHelper {
-    public void init(DcMotor BR, DcMotor BL, DcMotor FR, DcMotor FL) {
 
-        // Initialize the drive system variables.
-        BR = hardwareMap.get(DcMotor.class, "BR"); //back right motor
-        BL = hardwareMap.get(DcMotor.class, "BL"); //back left motor
-        FL = hardwareMap.get(DcMotor.class, "FL"); //front left motor
-        FR = hardwareMap.get(DcMotor.class, "FR"); //front right motor
+    public static final double     FORWARD_SPEED = 0.6;
+    public static final double     TURN_SPEED    = 0.5;
+    public static final double     OUTSIDE_FORWARD_TIME = 1.0;
+    public static final double     OUTSIDE_HOME_TIME = 2.8;
+    public static final double     TURN_TIME = 1.9;
+    public static final double     INSIDE_FORWARD_TIME = 0.2;
+    public static final double     INSIDE_HOME_TIME = 0.3;
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        BL.setDirection(DcMotor.Direction.REVERSE);
-        FR.setDirection(DcMotor.Direction.REVERSE);
-        BR.setDirection(DcMotor.Direction.FORWARD);
-        FL.setDirection(DcMotor.Direction.FORWARD);
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");
-        telemetry.update();
+    private ElapsedTime runtime = new ElapsedTime();
+
+    public void drive(DcMotor BL, DcMotor FR, DcMotor FL, DcMotor BR, double speed) {
+        BL.setPower(speed);
+        FR.setPower(speed);
+        FL.setPower(speed);
+        BR.setPower(speed);
+    }
+
+    public void turnLeft (DcMotor BL, DcMotor FR) {
+        BL.setPower(TURN_SPEED);
+        FR.setPower(-TURN_SPEED);
+    }
+
+    public void turnRight (DcMotor BL, DcMotor FR) {
+        BL.setPower(-TURN_SPEED);
+        FR.setPower(TURN_SPEED);
+    }
+
+    public void stop(DcMotor BL, DcMotor FR, DcMotor FL, DcMotor BR) {
+        this.drive(BL, FR, FL, BR, 0);
     }
 }
