@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.achive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -53,9 +53,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Auto Drive By Time: Inside-right", group="Team 20195")
+@Autonomous(name="Auto Drive By Time: Inside-left", group="Team 20195")
 
-public class InsideRightAutoByTime extends LinearOpMode {
+public class InsideLeftAutoByTime extends LinearOpMode {
     private DcMotor BR;
     private DcMotor BL;
     private DcMotor FL;
@@ -83,7 +83,7 @@ public class InsideRightAutoByTime extends LinearOpMode {
         }
 
         // Step 2:  Spin right for 1.9 seconds
-        helper.turnRight(BL, FR);
+        helper.turnLeft(BL, FR);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < helper.TURN_TIME)){
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());

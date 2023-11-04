@@ -21,10 +21,10 @@ public class MotorDirectionTest extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -37,9 +37,9 @@ public class MotorDirectionTest extends LinearOpMode {
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
