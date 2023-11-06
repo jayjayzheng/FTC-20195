@@ -9,15 +9,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="Competition Mode", group="Team 20195")
 public class Competition_20195 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor climberMotor = null;
-    private Servo climberServo = null;
-    private DcMotor backRight;
-    private DcMotor frontRight;
-    private DcMotor armmotor;
-    private Servo left_hand;
-    private Servo right_hand;
-    private DcMotor backLeft;
-    private DcMotor frontLeft;
+    private DcMotor climber = null;
+    private Servo hook = null;
+    private DcMotor backRight = null;
+    private DcMotor frontRight = null;
+    private DcMotor arm = null;
+    private Servo leftHand = null;
+    private Servo rightHand = null;
+    private DcMotor backLeft = null;
+    private DcMotor frontLeft = null;
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
@@ -28,39 +28,8 @@ public class Competition_20195 extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
-        double servo_speed;
-        //motors
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        armmotor = hardwareMap.get(DcMotor.class, "arm");
-        climberMotor  = hardwareMap.get(DcMotor.class, "climber");
 
-        //servos
-        climberServo = hardwareMap.get(Servo.class, "servo0"); //this is the climber servo
-        left_hand = hardwareMap.get(Servo.class, "left_hand");
-        right_hand = hardwareMap.get(Servo.class, "right_hand");
-
-        //set motor reverse
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        //armMotor setting
-        armmotor.setDirection(DcMotor.Direction.FORWARD);
-        armmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armmotor.setTargetPosition(0);
-        armmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        left_hand.scaleRange(0, 1);
-        right_hand.scaleRange(0, 1);
-        // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+        this.getReady();
         waitForStart();
         runtime.reset();
             // Put run blocks here.
@@ -69,6 +38,40 @@ public class Competition_20195 extends LinearOpMode {
             this.armMode();
             this.climbMode();
         }
+    }
+
+    public void getReady() {
+        //motors
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        climber  = hardwareMap.get(DcMotor.class, "climber");
+
+        //servos
+        hook = hardwareMap.get(Servo.class, "servo0"); //this is the climber servo
+        leftHand = hardwareMap.get(Servo.class, "left_hand");
+        rightHand = hardwareMap.get(Servo.class, "right_hand");
+
+        //set motor reverse
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        //armMotor setting
+        arm.setDirection(DcMotor.Direction.FORWARD);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftHand.scaleRange(0, 1);
+        rightHand.scaleRange(0, 1);
+        // Wait for the game to start (driver presses PLAY)
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     public void driveMode() {
@@ -132,16 +135,16 @@ public class Competition_20195 extends LinearOpMode {
     public void armMode() {
 
         if (gamepad2.a) {
-            armmotor.setTargetPosition(0);
-            armmotor.setPower(0.2);
+            arm.setTargetPosition(0);
+            arm.setPower(0.2);
         }
         if (gamepad2.b) {
-            armmotor.setTargetPosition(800);
-            armmotor.setPower(0.2);
+            arm.setTargetPosition(800);
+            arm.setPower(0.2);
         }
         if (gamepad2.y) {
-            armmotor.setTargetPosition(1000);
-            armmotor.setPower(0.2);
+            arm.setTargetPosition(1000);
+            arm.setPower(0.2);
         }
     }
 
@@ -152,7 +155,7 @@ public class Competition_20195 extends LinearOpMode {
         } else if (gamepad1.right_trigger > 0) {
             climbPower = 1.0;
         }
-        climberMotor.setPower(climbPower);
+        climber.setPower(climbPower);
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Climber", "%4.2f", climbPower);
@@ -181,7 +184,7 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.update();
 
         // Set the servo to the new position and pause;
-        climberServo.setPosition(ClimberServoPosition);
+        hook.setPosition(ClimberServoPosition);
         sleep(CYCLE_MS);
         idle();
     }
