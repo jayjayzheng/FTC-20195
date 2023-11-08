@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Competition Mode", group="Team 20195")
 public class Competition_20195 extends LinearOpMode {
-    private ElapsedTime runtime = new ElapsedTime();
     private DcMotor climber = null;
     private DcMotor arm = null;
     private DcMotor backRight = null;
@@ -37,7 +36,6 @@ public class Competition_20195 extends LinearOpMode {
 
         this.getReady();
         waitForStart();
-        runtime.reset();
 
         while (opModeIsActive()) {
             this.driveMode();
@@ -48,7 +46,7 @@ public class Competition_20195 extends LinearOpMode {
         }
     }
 
-    public void getReady() {
+    private void getReady() {
         //motors
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -87,7 +85,7 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.update();
     }
 
-    public void driveMode() {
+    private void driveMode() {
         double max;
 
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -138,7 +136,6 @@ public class Competition_20195 extends LinearOpMode {
         backRight.setPower(rightBackPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.update();
@@ -146,15 +143,15 @@ public class Competition_20195 extends LinearOpMode {
         idle();
     }
 
-    public void armMode() {
+    private void armMode() {
 
-        if (gamepad2.y) {                   //arm goes up
+        if (gamepad2.y  && !arm.isBusy()) {                   //arm goes up
             ArmPosition += ARM_INCREMENT ;
             if (ArmPosition >= ARM_MAX ) {
                 ArmPosition = ARM_MAX;
             }
         }
-        else if (gamepad2.a) {              //arm goes down
+        else if (gamepad2.a && !arm.isBusy()) {              //arm goes down
             ArmPosition -= ARM_INCREMENT ;
             if (ArmPosition >= ARM_MIN ) {
                 ArmPosition = ARM_MIN;
@@ -171,7 +168,7 @@ public class Competition_20195 extends LinearOpMode {
         idle();
     }
 
-    public void handMode() {
+    private void handMode() {
         if (gamepad1.left_bumper) {         //close hand: hold
             rightHand.setPosition(0.5);
             leftHand.setPosition(0.5);
@@ -187,7 +184,7 @@ public class Competition_20195 extends LinearOpMode {
         idle();
     }
 
-    public void climbMode() {
+    private void climbMode() {
         double climbPower = 0.0;
         if (gamepad2.left_trigger > 0) {
             climbPower = -1.0;
@@ -201,7 +198,7 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.addData("Climber power", "%4.2f", climbPower);
         telemetry.update();
 
-        //this is the climber servo section
+        //this is the hook servo section
         // slew the servo, according to the rampUp (direction) variable.
         if (gamepad2.left_bumper) {
             // Keep stepping up until we hit the max value.
@@ -227,7 +224,7 @@ public class Competition_20195 extends LinearOpMode {
         idle();
     }
 
-    public void launchMode() {
+    private void launchMode() {
         if (gamepad2.dpad_up) {
             // Keep stepping up until we hit the max value.
             LauncherPosition += INCREMENT ;
