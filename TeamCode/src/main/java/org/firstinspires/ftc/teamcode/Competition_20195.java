@@ -22,11 +22,11 @@ public class Competition_20195 extends LinearOpMode {
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.25;     // Minimum rotational position
-    static final int ARM_INCREMENT = 25;
-    static final int ARM_MAX = 1200;
-    static final int ARM_MIN = -10;
+    static final int ARM_INCREMENT  =  25;
+    static final int ARM_MAX        = 1200;
+    static final int ARM_MIN        = -10;
     int ArmPosition = 0;
-    double  HookPosition = 0.25; // Start at halfway position
+    double HookPosition = 0.25; // Start position
     double LauncherPosition = 0.0;
     static final boolean DRIVING_TEST_DIRECTION = false;
     /**
@@ -82,6 +82,8 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Arm Start Position", "%7d",
                 arm.getCurrentPosition());
+        telemetry.addData("Hook start position", "%7d", hook.getPosition());
+        telemetry.addData("Launcher start position", "%7d", launcher.getPosition());
         telemetry.update();
     }
 
@@ -144,13 +146,13 @@ public class Competition_20195 extends LinearOpMode {
 
     public void armMode() {
 
-        if (gamepad2.y) {
+        if (gamepad2.y) {                   //arm goes up
             ArmPosition += ARM_INCREMENT ;
             if (ArmPosition >= ARM_MAX ) {
                 ArmPosition = ARM_MAX;
             }
         }
-        else if (gamepad2.a) {
+        else if (gamepad2.a) {              //arm goes down
             ArmPosition -= ARM_INCREMENT ;
             if (ArmPosition >= ARM_MIN ) {
                 ArmPosition = ARM_MIN;
@@ -170,11 +172,15 @@ public class Competition_20195 extends LinearOpMode {
         if (gamepad1.left_bumper) {         //close hand: hold
             rightHand.setPosition(0.5);
             leftHand.setPosition(0.5);
+            telemetry.addData("Hand state", "Closed");
         }
         if (gamepad1.right_bumper) {        //open hand: drop
             rightHand.setPosition(0);
             leftHand.setPosition(0);
+            telemetry.addData("Hand state", "Open");
         }
+        telemetry.update();
+
     }
 
     public void climbMode() {
@@ -187,7 +193,7 @@ public class Competition_20195 extends LinearOpMode {
         climber.setPower(climbPower);
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Climber", "%4.2f", climbPower);
+        telemetry.addData("Climber power", "%4.2f", climbPower);
         telemetry.update();
 
         //this is the climber servo section
@@ -208,7 +214,7 @@ public class Competition_20195 extends LinearOpMode {
         }
 
         // Display the current value
-        telemetry.addData("Hook Position", "%5.2f", HookPosition);
+        telemetry.addData("Hook Current Position", "%5.2f", HookPosition);
         telemetry.update();
 
         // Set the servo to the new position and pause;
@@ -233,7 +239,7 @@ public class Competition_20195 extends LinearOpMode {
         }
 
         // Display the current value
-        telemetry.addData("Launcher Position", "%5.2f", LauncherPosition);
+        telemetry.addData("Launcher Current Position", "%5.2f", LauncherPosition);
         telemetry.update();
 
         // Set the servo to the new position and pause;

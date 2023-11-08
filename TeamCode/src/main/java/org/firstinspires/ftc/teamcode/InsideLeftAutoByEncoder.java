@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
@@ -68,6 +69,8 @@ public class InsideLeftAutoByEncoder extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private Servo leftHand = null;
+    private Servo rightHand = null;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -92,6 +95,8 @@ public class InsideLeftAutoByEncoder extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        this.closeHand();
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  -10,  -10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
@@ -101,22 +106,27 @@ public class InsideLeftAutoByEncoder extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
+
+        this.openHand();
     }
 
     private void getReady() {
         // Initialize the drive system variables.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "FL");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "BL");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
-
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+        leftHand = hardwareMap.get(Servo.class, "left_hand");
+        rightHand = hardwareMap.get(Servo.class, "right_hand");
+        leftHand.scaleRange(0, 1);
+        rightHand.scaleRange(0, 1);
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -209,5 +219,17 @@ public class InsideLeftAutoByEncoder extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
+    }
+
+    public void openHand() {
+        rightHand.setPosition(0);
+        leftHand.setPosition(0);
+        telemetry.addData("Hand state", "Open");
+    }
+    public void closeHand() {
+        rightHand.setPosition(0.5);
+        leftHand.setPosition(0.5);
+        telemetry.addData("Hand state", "Closed");
+        telemetry.update();
     }
 }
