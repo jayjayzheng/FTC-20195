@@ -10,25 +10,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Competition_20195 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor climber = null;
-    private Servo hook = null;
-    private Servo launcher = null;
+    private DcMotor arm = null;
     private DcMotor backRight = null;
     private DcMotor frontRight = null;
-    private DcMotor arm = null;
-    private Servo leftHand = null;
-    private Servo rightHand = null;
     private DcMotor backLeft = null;
     private DcMotor frontLeft = null;
+    private Servo leftHand = null;
+    private Servo rightHand = null;
+    private Servo hook = null;
+    private Servo launcher = null;
+    int ArmPosition = 0;                        // arm start position
+    double HookPosition = 0.25;                 // hook start position
+    double LauncherPosition = 0.0;              // launcher start position
+    static final boolean DRIVING_TEST_DIRECTION = false;
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.25;     // Minimum rotational position
-    static final int ARM_INCREMENT  =  25;
-    static final int ARM_MAX        = 1200;
-    static final int ARM_MIN        = -10;
-    int ArmPosition = 0;
-    double HookPosition = 0.25; // Start position
-    double LauncherPosition = 0.0;
-    static final boolean DRIVING_TEST_DIRECTION = false;
+    static final double MIN_POS     =  0.25;    // Minimum rotational position
+    static final int ARM_INCREMENT  =  25;      // amount of position to rotate arm
+    static final int ARM_MAX        = 1200;     // Maximum arm position
+    static final int ARM_MIN        = -10;      // Minimum arm position
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -38,12 +38,12 @@ public class Competition_20195 extends LinearOpMode {
         this.getReady();
         waitForStart();
         runtime.reset();
-            // Put run blocks here.
+
         while (opModeIsActive()) {
             this.driveMode();
             this.armMode();
             this.handMode();
-            this.climbMode();
+            this.climbMode();           // contains hook mode
             this.launchMode();
         }
     }
@@ -142,6 +142,8 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         telemetry.update();
+
+        idle();
     }
 
     public void armMode() {
@@ -166,6 +168,7 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.addData("Arm current position",  "%7d",
                 arm.getCurrentPosition());
         telemetry.update();
+        idle();
     }
 
     public void handMode() {
@@ -181,18 +184,20 @@ public class Competition_20195 extends LinearOpMode {
         }
         telemetry.update();
 
+        idle();
     }
 
     public void climbMode() {
         double climbPower = 0.0;
         if (gamepad2.left_trigger > 0) {
             climbPower = -1.0;
+            telemetry.addData("Climber direction", "DOWN");
         } else if (gamepad2.right_trigger > 0) {
             climbPower = 1.0;
+            telemetry.addData("Climber direction", "UP");
         }
         climber.setPower(climbPower);
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Climber power", "%4.2f", climbPower);
         telemetry.update();
 
