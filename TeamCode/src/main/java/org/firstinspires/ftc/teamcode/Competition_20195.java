@@ -11,6 +11,7 @@ public class Competition_20195 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor climber = null;
     private Servo hook = null;
+    private Servo launcher = null;
     private DcMotor backRight = null;
     private DcMotor frontRight = null;
     private DcMotor arm = null;
@@ -19,10 +20,15 @@ public class Competition_20195 extends LinearOpMode {
     private DcMotor backLeft = null;
     private DcMotor frontLeft = null;
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.25;     // Minimum rotational position
-    double  ClimberServoPosition = 0.25; // Start at halfway position
+    static final int ARM_INCREMENT = 25;
+    static final int ARM_MAX = 1200;
+    static final int ARM_MIN = -10;
+    int ArmPosition = 0;
+    double  HookPosition = 0.25; // Start at halfway position
+    double LauncherPosition = 0.0;
+    static final boolean DRIVING_TEST_DIRECTION = false;
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -36,7 +42,9 @@ public class Competition_20195 extends LinearOpMode {
         while (opModeIsActive()) {
             this.driveMode();
             this.armMode();
+            this.handMode();
             this.climbMode();
+            this.launchMode();
         }
     }
 
@@ -51,6 +59,7 @@ public class Competition_20195 extends LinearOpMode {
 
         //servos
         hook = hardwareMap.get(Servo.class, "servo0"); //this is the climber servo
+        launcher = hardwareMap.get(Servo.class, "launcher");
         leftHand = hardwareMap.get(Servo.class, "left_hand");
         rightHand = hardwareMap.get(Servo.class, "right_hand");
 
@@ -64,13 +73,15 @@ public class Competition_20195 extends LinearOpMode {
         arm.setDirection(DcMotor.Direction.FORWARD);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition(0);
+        arm.setTargetPosition(ArmPosition);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         leftHand.scaleRange(0, 1);
         rightHand.scaleRange(0, 1);
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Arm Start Position", "%7d",
+                arm.getCurrentPosition());
         telemetry.update();
     }
 
@@ -111,13 +122,12 @@ public class Competition_20195 extends LinearOpMode {
         //   2) Then make sure they run in the correct direction by modifying the
         //      the setDirection() calls above.
         // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
+        if (DRIVING_TEST_DIRECTION) {
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+        }
 
         // Send calculated power to wheels
         frontLeft.setPower(leftFrontPower);
@@ -134,25 +144,44 @@ public class Competition_20195 extends LinearOpMode {
 
     public void armMode() {
 
-        if (gamepad2.a) {
-            arm.setTargetPosition(0);
-            arm.setPower(0.2);
-        }
-        if (gamepad2.b) {
-            arm.setTargetPosition(800);
-            arm.setPower(0.2);
-        }
         if (gamepad2.y) {
-            arm.setTargetPosition(1000);
-            arm.setPower(0.2);
+            ArmPosition += ARM_INCREMENT ;
+            if (ArmPosition >= ARM_MAX ) {
+                ArmPosition = ARM_MAX;
+            }
+        }
+        else if (gamepad2.a) {
+            ArmPosition -= ARM_INCREMENT ;
+            if (ArmPosition >= ARM_MIN ) {
+                ArmPosition = ARM_MIN;
+            }
+        }
+
+        arm.setTargetPosition(ArmPosition);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(Math.abs(0.2));
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Arm current position",  "%7d",
+                arm.getCurrentPosition());
+        telemetry.update();
+    }
+
+    public void handMode() {
+        if (gamepad1.left_bumper) {         //close hand: hold
+            rightHand.setPosition(0.5);
+            leftHand.setPosition(0.5);
+        }
+        if (gamepad1.right_bumper) {        //open hand: drop
+            rightHand.setPosition(0);
+            leftHand.setPosition(0);
         }
     }
 
     public void climbMode() {
         double climbPower = 0.0;
-        if (gamepad1.left_trigger > 0) {
+        if (gamepad2.left_trigger > 0) {
             climbPower = -1.0;
-        } else if (gamepad1.right_trigger > 0) {
+        } else if (gamepad2.right_trigger > 0) {
             climbPower = 1.0;
         }
         climber.setPower(climbPower);
@@ -163,29 +192,52 @@ public class Competition_20195 extends LinearOpMode {
 
         //this is the climber servo section
         // slew the servo, according to the rampUp (direction) variable.
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             // Keep stepping up until we hit the max value.
-            ClimberServoPosition += INCREMENT ;
-            if (ClimberServoPosition >= MAX_POS ) {
-                ClimberServoPosition = MAX_POS;
+            HookPosition += INCREMENT ;
+            if (HookPosition >= MAX_POS ) {
+                HookPosition = MAX_POS;
             }
         }
-        else if (gamepad1.right_bumper) {
+        else if (gamepad2.right_bumper) {
             // Keep stepping down until we hit the min value.
-            ClimberServoPosition -= INCREMENT ;
-            if (ClimberServoPosition <= MIN_POS ) {
-                ClimberServoPosition = MIN_POS;
+            HookPosition -= INCREMENT ;
+            if (HookPosition <= MIN_POS ) {
+                HookPosition = MIN_POS;
             }
         }
 
         // Display the current value
-        telemetry.addData("Servo Position", "%5.2f", ClimberServoPosition);
-        telemetry.addData(">", "Press Stop to end test." );
+        telemetry.addData("Hook Position", "%5.2f", HookPosition);
         telemetry.update();
 
         // Set the servo to the new position and pause;
-        hook.setPosition(ClimberServoPosition);
-        sleep(CYCLE_MS);
+        hook.setPosition(HookPosition);
+        idle();
+    }
+
+    public void launchMode() {
+        if (gamepad2.dpad_up) {
+            // Keep stepping up until we hit the max value.
+            LauncherPosition += INCREMENT ;
+            if (LauncherPosition >= MAX_POS ) {
+                LauncherPosition = MAX_POS;
+            }
+        }
+        else if (gamepad2.dpad_down) {
+            // Keep stepping down until we hit the min value.
+            LauncherPosition -= INCREMENT ;
+            if (LauncherPosition <= MIN_POS ) {
+                LauncherPosition = MIN_POS;
+            }
+        }
+
+        // Display the current value
+        telemetry.addData("Launcher Position", "%5.2f", LauncherPosition);
+        telemetry.update();
+
+        // Set the servo to the new position and pause;
+        launcher.setPosition(LauncherPosition);
         idle();
     }
 }
