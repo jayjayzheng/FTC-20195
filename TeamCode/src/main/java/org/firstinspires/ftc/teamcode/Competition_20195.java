@@ -42,7 +42,8 @@ public class Competition_20195 extends LinearOpMode {
             this.armMode();
             this.handMode();
             this.climbMode();           // contains hook mode
-            this.launchMode();
+//            this.launchMode();
+            idle();
         }
     }
 
@@ -80,8 +81,8 @@ public class Competition_20195 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Arm Start Position", "%7d",
                 arm.getCurrentPosition());
-        telemetry.addData("Hook start position", "%7d", hook.getPosition());
-        telemetry.addData("Launcher start position", "%7d", launcher.getPosition());
+//        telemetry.addData("Hook start position", "%7d", hook.getPosition());
+//        telemetry.addData("Launcher start position", "%7d", launcher.getPosition());
         telemetry.update();
     }
 
@@ -134,13 +135,6 @@ public class Competition_20195 extends LinearOpMode {
         frontRight.setPower(rightFrontPower);
         backLeft.setPower(leftBackPower);
         backRight.setPower(rightBackPower);
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        telemetry.update();
-
-        idle();
     }
 
     private void armMode() {
@@ -150,8 +144,7 @@ public class Competition_20195 extends LinearOpMode {
             if (ArmPosition >= ARM_MAX ) {
                 ArmPosition = ARM_MAX;
             }
-        }
-        else if (gamepad2.a && !arm.isBusy()) {              //arm goes down
+        } else if (gamepad2.a && !arm.isBusy()) {              //arm goes down
             ArmPosition -= ARM_INCREMENT ;
             if (ArmPosition >= ARM_MIN ) {
                 ArmPosition = ARM_MIN;
@@ -161,11 +154,6 @@ public class Competition_20195 extends LinearOpMode {
         arm.setTargetPosition(ArmPosition);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(Math.abs(0.2));
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Arm current position",  "%7d",
-                arm.getCurrentPosition());
-        telemetry.update();
-        idle();
     }
 
     private void handMode() {
@@ -173,15 +161,13 @@ public class Competition_20195 extends LinearOpMode {
             rightHand.setPosition(0.5);
             leftHand.setPosition(0.5);
             telemetry.addData("Hand state", "Closed");
-        }
-        if (gamepad1.right_bumper) {        //open hand: drop
+            telemetry.update();
+        } else if (gamepad1.right_bumper) {        //open hand: drop
             rightHand.setPosition(0);
             leftHand.setPosition(0);
             telemetry.addData("Hand state", "Open");
+            telemetry.update();
         }
-        telemetry.update();
-
-        idle();
     }
 
     private void climbMode() {
@@ -189,14 +175,13 @@ public class Competition_20195 extends LinearOpMode {
         if (gamepad2.left_trigger > 0) {
             climbPower = -1.0;
             telemetry.addData("Climber direction", "DOWN");
+            telemetry.update();
         } else if (gamepad2.right_trigger > 0) {
             climbPower = 1.0;
             telemetry.addData("Climber direction", "UP");
+            telemetry.update();
         }
         climber.setPower(climbPower);
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Climber power", "%4.2f", climbPower);
-        telemetry.update();
 
         //this is the hook servo section
         // slew the servo, according to the rampUp (direction) variable.
@@ -215,13 +200,8 @@ public class Competition_20195 extends LinearOpMode {
             }
         }
 
-        // Display the current value
-        telemetry.addData("Hook Current Position", "%5.2f", HookPosition);
-        telemetry.update();
-
         // Set the servo to the new position and pause;
         hook.setPosition(HookPosition);
-        idle();
     }
 
     private void launchMode() {
@@ -240,12 +220,7 @@ public class Competition_20195 extends LinearOpMode {
             }
         }
 
-        // Display the current value
-        telemetry.addData("Launcher Current Position", "%5.2f", LauncherPosition);
-        telemetry.update();
-
         // Set the servo to the new position and pause;
         launcher.setPosition(LauncherPosition);
-        idle();
     }
 }

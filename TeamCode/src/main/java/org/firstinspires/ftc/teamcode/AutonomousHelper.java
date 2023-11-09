@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Autonomous(name="Auto By Encoder", group="Team 20195")
 public class AutonomousHelper extends LinearOpMode {
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -13,14 +14,14 @@ public class AutonomousHelper extends LinearOpMode {
     private Servo leftHand = null;
     private Servo rightHand = null;
     private ElapsedTime runtime = new ElapsedTime();
-    static final double     COUNTS_PER_MOTOR_REV    = 500 ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    private String BotPosition;
+    private String BotPosition = "InsideLeft";
 
     @Override
     public void runOpMode() {
@@ -31,27 +32,27 @@ public class AutonomousHelper extends LinearOpMode {
         if (BotPosition.indexOf("InsideLeft") > 0) {
             telemetry.addData("Bot Position", "Inside Left");
             telemetry.update();
-            encoderDrive(DRIVE_SPEED,  -10,  -10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -10, -10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED,  10,  10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED, 10, 10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
         } else if (BotPosition.indexOf("InsideRight") > 0) {
             telemetry.addData("Bot Position", "Inside Right");
             telemetry.update();
-            encoderDrive(DRIVE_SPEED,  -10,  -10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -10, -10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED,  10,  10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED, 10, 10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
         } else if (BotPosition.indexOf("OutsideLeft") > 0) {
             telemetry.addData("Bot Position", "Outside Left");
             telemetry.update();
-            encoderDrive(DRIVE_SPEED,  -50,  -50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -90, -90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED,  50,  50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED, 90, 90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
         } else if (BotPosition.indexOf("OutsideRight") > 0) {
             telemetry.addData("Bot Position", "Outside Right");
             telemetry.update();
-            encoderDrive(DRIVE_SPEED,  -50,  -50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Right 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -90, -90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED,  50,  50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Right 23 Inches with 4 Sec timeout
+            encoderDrive(DRIVE_SPEED, 90, 90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
         } else {
             telemetry.addData("Bot Position", "NO POSITION FOUND!!!!!");
             telemetry.update();
@@ -98,20 +99,20 @@ public class AutonomousHelper extends LinearOpMode {
         telemetry.update();
     }
 
-    private void openHand() {
+    private void closeHand() {
         sleep(250);   // optional pause before move.
 
         rightHand.setPosition(0);
         leftHand.setPosition(0);
-        telemetry.addData("Hand state", "Open");
+        telemetry.addData("Hand state", "Closed");
         telemetry.update();
     }
-    private void closeHand() {
+    private void openHand() {
         sleep(250);   // optional pause before move.
 
         rightHand.setPosition(0.5);
         leftHand.setPosition(0.5);
-        telemetry.addData("Hand state", "Closed");
+        telemetry.addData("Hand state", "Open");
         telemetry.update();
     }
 
