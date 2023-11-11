@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.achive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,14 +14,14 @@ public class AutonomousHelper extends LinearOpMode {
     private Servo leftHand = null;
     private Servo rightHand = null;
     private ElapsedTime runtime = new ElapsedTime();
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = 1 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
-    private String BotPosition = "InsideLeft";
+    static final double     DRIVE_SPEED             = 0.2;
+    static final double     TURN_SPEED              = 0.1;
+    static final String BotPosition = "OutsideRight";
 
     @Override
     public void runOpMode() {
@@ -29,34 +29,11 @@ public class AutonomousHelper extends LinearOpMode {
         waitForStart();
         this.closeHand();
 
-        if (BotPosition.indexOf("InsideLeft") > 0) {
-            telemetry.addData("Bot Position", "Inside Left");
-            telemetry.update();
-            encoderDrive(DRIVE_SPEED,  10,  10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, 10, 10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
-        } else if (BotPosition.indexOf("InsideRight") > 0) {
-            telemetry.addData("Bot Position", "Inside Right");
-            telemetry.update();
-            encoderDrive(DRIVE_SPEED,  10,  10, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, 10, 10, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
-        } else if (BotPosition.indexOf("OutsideLeft") > 0) {
-            telemetry.addData("Bot Position", "Outside Left");
-            telemetry.update();
-            encoderDrive(DRIVE_SPEED,  50,  50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   23, -23, 4.0);  // S2: Turn Left 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, 90, 90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
-        } else if (BotPosition.indexOf("OutsideRight") > 0) {
-            telemetry.addData("Bot Position", "Outside Right");
-            telemetry.update();
-            encoderDrive(DRIVE_SPEED,  50,  50, 5.0);  // S1: Forward 55 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Right 23 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, 90, 90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
-        } else {
-            telemetry.addData("Bot Position", "NO POSITION FOUND!!!!!");
-            telemetry.update();
-        }
+        encoderDrive(DRIVE_SPEED,  0.01,  0.01, 0.5);  // S1: Forward 55 Inches with 5 Sec timeout
+        encoderDrive(TURN_SPEED,   -23, 23, 4.0);  // S2: Turn Right 23 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 90, 90, 4.0);  // S3: Forward 90 Inches with 4 Sec timeout
+
+        sleep(2000);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -134,8 +111,8 @@ public class AutonomousHelper extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches);
+            newRightTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches);
             leftFrontDrive.setTargetPosition(newLeftTarget);
             leftBackDrive.setTargetPosition(newLeftTarget);
             rightFrontDrive.setTargetPosition(newRightTarget);
@@ -188,10 +165,5 @@ public class AutonomousHelper extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
-    }
-
-    public void runOpMode(String BotPosition) {
-        this.BotPosition = BotPosition;
-        this.runOpMode();
     }
 }

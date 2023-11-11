@@ -19,13 +19,15 @@ public class Competition_20195 extends LinearOpMode {
     private Servo hook = null;
     private Servo launcher = null;
     int ArmPosition = 0;                        // arm start position
-    double HookPosition = 0.25;                 // hook start position
-    double LauncherPosition = 0.0;              // launcher start position
+    double HookPosition = 0.0;                 // hook start position
+    double LauncherPosition = 0.3;              // launcher start position
     static final boolean DRIVING_TEST_DIRECTION = false;
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.25;    // Minimum rotational position
-    static final int ARM_INCREMENT  =  25;      // amount of position to rotate arm
+    static final double HOOK_MAX_POS     =  0.68;     // Maximum rotational position
+    static final double HOOK_MIN_POS     =  0.0;    // Minimum rotational position
+    static final double LAUNCHER_MAX_POS = 0.8;
+    static final double LAUNCHER_MIN_POS = 0.3;
+    static final int ARM_INCREMENT  =  50;      // amount of position to rotate arm
     static final int ARM_MAX        = 1200;     // Maximum arm position
     static final int ARM_MIN        = -10;      // Minimum arm position
     /**
@@ -42,7 +44,7 @@ public class Competition_20195 extends LinearOpMode {
             this.armMode();
             this.handMode();
             this.climbMode();           // contains hook mode
-//            this.launchMode();
+            this.launchMode();
             idle();
         }
     }
@@ -57,8 +59,8 @@ public class Competition_20195 extends LinearOpMode {
         climber  = hardwareMap.get(DcMotor.class, "climber");
 
         //servos
-        hook = hardwareMap.get(Servo.class, "servo0"); //this is the climber servo
-        launcher = hardwareMap.get(Servo.class, "launcher");
+        hook = hardwareMap.get(Servo.class, "servo"); //this is the climber servo
+        launcher = hardwareMap.get(Servo.class, "servo5");
         leftHand = hardwareMap.get(Servo.class, "left_hand");
         rightHand = hardwareMap.get(Servo.class, "right_hand");
 
@@ -77,6 +79,8 @@ public class Competition_20195 extends LinearOpMode {
 
         leftHand.scaleRange(0, 1);
         rightHand.scaleRange(0, 1);
+
+        launcher.setPosition(LauncherPosition);
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Arm Start Position", "%7d",
@@ -172,11 +176,11 @@ public class Competition_20195 extends LinearOpMode {
 
     private void climbMode() {
         double climbPower = 0.0;
-        if (gamepad2.left_trigger > 0) {
+        if (gamepad2.dpad_down) {
             climbPower = -1.0;
             telemetry.addData("Climber direction", "DOWN");
             telemetry.update();
-        } else if (gamepad2.right_trigger > 0) {
+        } else if (gamepad2.dpad_up) {
             climbPower = 1.0;
             telemetry.addData("Climber direction", "UP");
             telemetry.update();
@@ -185,18 +189,18 @@ public class Competition_20195 extends LinearOpMode {
 
         //this is the hook servo section
         // slew the servo, according to the rampUp (direction) variable.
-        if (gamepad2.left_bumper) {
+        if (gamepad2.dpad_right) {
             // Keep stepping up until we hit the max value.
             HookPosition += INCREMENT ;
-            if (HookPosition >= MAX_POS ) {
-                HookPosition = MAX_POS;
+            if (HookPosition >= HOOK_MAX_POS ) {
+                HookPosition = HOOK_MAX_POS;
             }
         }
-        else if (gamepad2.right_bumper) {
+        else if (gamepad2.dpad_left) {
             // Keep stepping down until we hit the min value.
             HookPosition -= INCREMENT ;
-            if (HookPosition <= MIN_POS ) {
-                HookPosition = MIN_POS;
+            if (HookPosition <= HOOK_MIN_POS ) {
+                HookPosition = HOOK_MIN_POS;
             }
         }
 
@@ -205,18 +209,18 @@ public class Competition_20195 extends LinearOpMode {
     }
 
     private void launchMode() {
-        if (gamepad2.dpad_up) {
+        if (gamepad2.left_trigger > 0) {
             // Keep stepping up until we hit the max value.
             LauncherPosition += INCREMENT ;
-            if (LauncherPosition >= MAX_POS ) {
-                LauncherPosition = MAX_POS;
+            if (LauncherPosition >= LAUNCHER_MAX_POS ) {
+                LauncherPosition = LAUNCHER_MAX_POS;
             }
         }
-        else if (gamepad2.dpad_down) {
+        else if (gamepad2.right_trigger > 0) {
             // Keep stepping down until we hit the min value.
             LauncherPosition -= INCREMENT ;
-            if (LauncherPosition <= MIN_POS ) {
-                LauncherPosition = MIN_POS;
+            if (LauncherPosition <= LAUNCHER_MIN_POS ) {
+                LauncherPosition = LAUNCHER_MIN_POS;
             }
         }
 
