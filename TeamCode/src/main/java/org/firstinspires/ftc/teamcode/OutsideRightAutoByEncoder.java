@@ -30,8 +30,8 @@ public class OutsideRightAutoByEncoder extends LinearOpMode {
         this.closeHand();
 
         encoderDrive(DRIVE_SPEED,  10,  10, 2.95);  // S1: Forward 55 Inches with 2.9 Sec timeout
-        encoderDrive(TURN_SPEED,   10, -10, 2.05);  // S2: Turn Right 23 Inches with 1 Sec timeout
-        encoderDrive(DRIVE_SPEED, 10, 10, 3.5);  // S3: Forward 90 Inches with 4 Sec timeout
+        encoderDrive(TURN_SPEED,   10, -10, 2.1);  // S2: Turn Right 23 Inches with 1 Sec timeout
+        encoderDrive(DRIVE_SPEED, 10, 10, 3.82);  // S3: Forward 90 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
